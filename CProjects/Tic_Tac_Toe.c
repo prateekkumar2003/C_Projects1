@@ -1,7 +1,6 @@
 #include <stdio.h>
+#include<stdlib.h>
 
-// Prototype
-void system();
 
 // Globally declared 2D-array
 char board[3][3];
