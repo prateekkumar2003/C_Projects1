@@ -1,64 +1,219 @@
 #include <stdio.h>
-#include <stdbool.h>
 
-void printBoard();
-int checkWin();
+// Prototype
 void system();
 
-char board[]={' ','1','2','3','4','5','6','7','8','9'};
-int cnt=0;
+// Globally declared 2D-array
+char board[3][3];
 
-void main(){
-    int player=1;
-    int input;
-    printBoard();
-   
-    while (true)
+// Make a board for reference
+void PrintReference(){
+    int count = 1;
+    printf("\n\n\t  ");
+    for (int i = 0; i < 3; i++)
     {
-        player=(player%2==0) ? 2 : 1;
-        char mark=(player==1) ? 'X' :'O';
-        printf("Please enter Number For Player %d\n",player);
-        scanf("%d",&input);
-    if(input<1 || input>9 || board[input]=='X' || board[input]=='O'){
-        printf("invalid input\n");
-        continue;
+        for (int j = 0; j < 3; j++)
+        {
+            printf("%d", count++);
+            if (j < 2)
+            {
+                printf("  |  ");
+            }
+        }
+        if (i < 2)
+            printf("\n\t----------------\n\t  ");
     }
-
-    board[input]=mark;
-    cnt++;
-    printBoard();
-
-    int result=checkWin();
-
-    if(result==1){
-        printf("Player %d is the Winner\n",player);
-        return;
-    }else if(result==0){
-        printf("draw");
-        return; 
+    printf("\n\n\n");
+}
+// Function to initialize the game board
+void initializeBoard()
+{
+    // Setting the char array to ' '
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            board[i][j] = ' ';
+        }
     }
-    player++;
-    }
-    
-    
+    // Printing the 2-D array indicating place
+    PrintReference();
 }
 
-void printBoard(){
-    system("clear");
-    printf("\n\n");
-    printf("=== TIC TAC TOE ===\n\n");
-    printf("     |     |     \n");
-    printf("  %c  |  %c  |  %c  \n",board[1],board[2],board[3]);
-    printf("_____|_____|_____\n");
-    printf("     |     |     \n");
-    printf("  %c  |  %c  |  %c  \n",board[4],board[5],board[6]);
-    printf("_____|_____|_____\n");
-    printf("     |     |     \n");
-    printf("  %c  |  %c  |  %c  \n",board[7],board[8],board[9]);
-    printf("     |     |     \n");
-    printf("\n\n");
+// Function shows the game board
+void showBoard(int x, int y)
+{
+    printf("\n\n\t  ");
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            printf("%c", board[i][j]);
+            if (j < 2)
+            {
+                printf("  |  ");
+            }
+        }
+        if (i < 2)
+            printf("\n\t----------------\n\t  ");
+    }
+    printf("\n\n\n");
 }
 
+// Function to update the game board
+int updateBoard(int cell, char playerSign)
+{
+    int row = (cell - 1) / 3;
+    int col = (cell - 1) % 3;
+    int isValid = 1;
+
+    // accessing already played cell number
+    if (board[row][col] != ' ')
+    {
+        printf("\nInvalid: Cell is already Filled!\n");
+        isValid = 0;
+    }
+
+    // valid cell position
+    else
+    {
+        board[row][col] = playerSign;
+        system("cls");
+        PrintReference();
+    }
+
+    showBoard(row, col);
+
+    return isValid;
+}
+
+// Function to check the winner of the game
+int checkWinner(char sg)
+{
+    // check all rows
+    if (board[0][0] == sg && board[0][1] == sg && board[0][2] == sg ||
+        board[1][0] == sg && board[1][1] == sg && board[1][2] == sg ||
+        board[2][0] == sg && board[2][1] == sg && board[2][2] == sg)
+    {
+        return 1;
+    }
+    // check all columns
+    else if (board[0][0] == sg && board[1][0] == sg && board[2][0] == sg ||
+             board[0][1] == sg && board[1][1] == sg && board[2][1] == sg ||
+             board[0][2] == sg && board[1][2] == sg && board[2][2] == sg)
+    {
+        return 1;
+    }
+    // check both diagonals
+    else if (board[0][0] == sg && board[1][1] == sg && board[2][2] == sg ||
+             board[0][2] == sg && board[1][1] == sg && board[2][0] == sg)
+    {
+        return 1;
+    }
+
+    // There is no winner
+    return 0;
+}
+
+// Start your game from here
+void playTicTacToe()
+{
+    int gameResult = 0;
+    int cell = 0;
+    int playCount = 0;
+    int updationResult = 1;
+
+    char playerSign = ' ';
+
+    // start playing the game
+    while (!gameResult && playCount < 9)
+    {
+        if (playCount % 2 == 0)
+        {
+            // player 1
+            printf("\nPlayer 1 [ X ] : ");
+            playerSign = 'X';
+        }
+        else
+        {
+            // player 2
+            printf("\nPlayer 2 [ O ] : ");
+            playerSign = 'O';
+        }
+        scanf("%d", &cell);
+        if (cell > 0 && cell < 10)
+        {
+            updationResult = updateBoard(cell, playerSign);
+            // if updation is possible (==1)
+            if (updationResult)
+            {
+                gameResult = checkWinner(playerSign);
+                // print the winner of the game
+                if (gameResult)
+                {
+                    printf("\t *** Player %d Won!! ***\n", playerSign == 'X' ? 1 : 2);
+                }
+                playCount++;
+            }
+        }
+        else if (cell == -1)
+        {
+            printf("\n\tGame Terminated\n");
+            return;
+        }
+        else
+        {
+            printf("\nPlease Enter a valid cell value\n");
+        }
+    }
+
+    // no one won the game
+    if (!gameResult && playCount == 9)
+    {
+        printf("\n\t *** Draw...  ***\n");
+    }
+    printf("\n\t --- Game Over --- \n");
+}
+
+int main()
+{
+    printf("--------- Tic Tac Toe ----------\n\n");
+
+    printf("\n* Instructions \n\n");
+    printf("\tPlayer 1 sign = X\n");
+    printf("\tPlayer 2 sign = O");
+    printf("\n\tTo exit from game, Enter -1\n");
+
+    printf("\n\n* Cell Numbers on Board\n");
+    initializeBoard();
+
+    char start = ' ';
+    printf("\n> Press Enter to start...");
+
+    scanf("%c", &start);
+
+    if (start)
+    {
+        int userChoice = 1;
+        // restart the game
+        while (userChoice)
+        {
+            playTicTacToe();
+            printf("\n* Menu\n");
+            printf("\nPress 1 to Restart");
+            printf("\nPress 0 for Exit");
+            printf("\n\nChoice: ");
+            scanf("%d", &userChoice);
+            if (userChoice)
+            {
+                initializeBoard();
+            }
+            printf("\n");
+        }
+    }
+    printf("\n :: Thanks for playing Tic Tac Toe game! :: \n");
+    return 0;
+}
 
 int checkWin(){
 
