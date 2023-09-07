@@ -213,36 +213,3 @@ int main()
     printf("\n :: Thanks for playing Tic Tac Toe game! :: \n");
     return 0;
 }
-
-int checkWin(){
-
-    if(board[1]==board[2] && board[2]==board[3]){
-        return 1;
-    }
-    if(board[1]==board[4] && board[4]==board[7]){
-        return 1;
-    }
-    if(board[7]==board[8] && board[8]==board[9]){
-        return 1;
-    }
-    if(board[3]==board[6] && board[6]==board[9]){
-        return 1;
-    }
-    if(board[1]==board[5] && board[5]==board[9]){
-        return 1;
-    }
-    if(board[3]==board[5] && board[5]==board[7]){
-        return 1;
-    }
-    if(board[2]==board[5] && board[5]==board[8]){
-        return 1;
-    }
-    if(board[4]==board[5] && board[5]==board[6]){
-        return 1;
-    }
-    
-    if(cnt==9){
-        return 0;
-    }
-    return -1;
-}
